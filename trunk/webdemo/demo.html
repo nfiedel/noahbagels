@@ -1,0 +1,192 @@
+<html>
+  <head>
+
+
+<!--
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.2.6/jquery.min.js"></script>
+  -->
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.2.6/jquery.js"></script>
+
+  <script type="text/javascript">
+  
+  // Whether or not to hide after mouseout - useful as false for debugging.
+  window.hover_actually_hide = true;
+  
+  window.socialize = function() {
+    if (window.socialized) return;
+    window.socialized = true;
+    
+    var allLinks = $("a[@href^=http://www.google.com/s2/profiles/]");
+    //allLinks.css("color", "blue");
+    //allLinks.css("font-weight", "bold");
+    allLinks.addClass('social_link');
+    allLinks.append('<img src="http://www.google.com/s2/favicons?domain=www.google.com" class="social_hover_img">');
+    var allSocImgs = $("img[@class=social_hover_img]");
+
+    allSocImgs.fadeIn("slow");
+
+    var hoverDiv = jQuery('<div class="hoverdiv">Social stuff here</div>');
+    allSocImgs.hover(function() {
+      window.loadHoverDiv(hoverDiv, $(this).parent().attr('href'));
+      hoverDiv.fadeIn("fast");
+      jQuery(this).parent().after(hoverDiv);
+    }, function() {
+      if (window.hover_actually_hide) {
+        
+        hoverDiv.fadeOut("slow");
+        
+      }
+
+    });
+
+  } // end window.socialize
+
+
+  window.loadHoverDiv = function(hoverDiv, debug) {
+    // do nothing...
+    //hoverDiv.html("Loading..." + debug);
+    // Needs to be http://www.google.com/s2/widgets/Hovercard?uid=107219357249420222884
+    // Is: http://www.google.com/s2/profiles/107219357249420222884
+
+    var debug2 = debug.replace("/s2/profiles/", "/s2/widgets/Hovercard?uid=");
+	hoverDiv.html('');
+    //hoverDiv.html('<iframe src="' + debug2 + '></iframe>');
+
+    // hoverDiv.html('loading...');
+    // hoverDiv.html(debug);
+    hoverDiv.html('<img src="waiting6.gif">');
+
+	//$(hoverDiv).load(debug + ' div[@class=*ll_name]');
+	
+	//tz, datetime
+	//var timezoneUrl = 'http://json-time.appspot.com/time.json?tz=America/Chicago&callback=?';
+	var HOSTNAME = 'http://hub.appspot.com/';
+	var LOCAL_HOSTNAME = 'http://localhost:8080';
+	var socialIdUrl = HOSTNAME + '?p=' + debug + '&c=?' 
+	
+	$.getJSON(socialIdUrl,
+        function(data){
+        hoverDiv.html('');
+          window.renderDataIntoDiv(hoverDiv, data);
+          //hoverDiv.append(data.pname);
+
+          //hoverDiv.append('<div class="jsonp">jsonp results (non social):<br/> timezone='+data.tz+'<br/> datetime='+data.datetime+'</div>');
+        });
+	
+  }
+  
+  window.renderDataIntoDiv = function(hoverDiv, data) {
+    hoverDiv.append('<div class="json_hovercard"><img class="pphoto" src="'+data.pphoto+'"/><div class="pname">'+data.pname+'</div></div>');
+  }
+  
+
+  // Load socialize when document is ready.
+  jQuery(document).ready(function() {
+    window.socialize();
+  });
+
+  </script>
+
+
+  <style type="text/css">
+
+  .social_hover_img {
+    border: none;
+    padding: 0px;
+    margin: 0;
+    display: none;
+    vertical-align: bottom;
+    margin-left: 0.25em;
+    
+  }
+
+  .hoverdiv {
+    display: none;
+    /*
+    background: #fff;
+    border: 1px solid #ccc;
+    
+    padding: 1em;
+    */
+    display: inline;
+    position: absolute;
+    
+  }
+  
+  .json_hovercard {
+  	border: 1px solid #ccc;
+  	float: right;
+  	font-family: verdana;
+  	
+  	overflow: hidden;
+  	margin: 2px;
+  	background: #fff;
+  	
+  }
+  
+  .json_hovercard .pphoto {
+  	display: inline;
+  }
+  
+  .json_hovercard .pname {
+  	/*font-weight: bold;*/
+  	font-size: 1.2em;
+  	vertical-align: top;
+  	display: inline;
+  	margin: 1em;
+  }
+  
+  .hoverdiv iframe {
+    border: none;
+    background: transparent;
+    overflow: hidden;
+    width: 320px;
+    position: absolute;
+    margin: 1.5em;
+  }
+
+  .social_link {
+    /* margin-right: 0.25em; */
+  }
+
+  </style>
+
+  </head>
+  <body>
+
+
+  <h1>A Page with people on it.</h1>
+
+  <p>Some content with non-person links.
+  <ul>
+  <li><a href="http://www.google.com">Google</a>
+
+  <li><a href="http://www.google.com/search?q=weather%2C+94043">Weather in Mountain View</a>
+  </ul>
+  
+
+  <p>Here is some content.
+  <hr/>
+  Signed by: <a href="http://www.google.com/s2/profiles/107219357249420222884">http://www.google.com/s2/profiles/107219357249420222884</a>
+
+  <p>Here is a second bit of content.
+  <hr/>
+  Signed by: <a href="http://www.google.com/s2/profiles/105297717648390625419">http://www.google.com/s2/profiles/105297717648390625419</a>
+
+  <p>I enjoy visiting Google.
+  <hr/>
+  Signed by: <a href="http://www.google.com/s2/profiles/103592968986801436675">http://www.google.com/s2/profiles/103592968986801436675</a>
+
+
+  <p> Isaac's comment.
+  <hr/>
+  Signed by: <a href="http://www.google.com/s2/profiles/105106962406858998302">http://www.google.com/s2/profiles/105106962406858998302</a>
+  
+<!--
+  <hr/>
+  <a href="javascript:window.socialize();">Open Socialize</a>
+-->
+
+  </body>
+</html>
+
